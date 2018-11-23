@@ -1,0 +1,86 @@
+[
+  {
+    "title": "Creed II",
+    "duration": 130,
+    "releaseYear": 2018,
+    "characters": [
+      {
+        "actor": {
+          "firstName": "Michael B.",
+          "lastName": "Jordan"
+        },
+        "characterName": "Adonis Johnson"
+      },
+      {
+        "actor": {
+          "firstName": "Sylvester",
+          "lastName": "Stallone"
+        },
+        "characterName": "Rocky Balboa"
+      },
+      {
+        "actor": {
+          "firstName": "Tessa",
+          "lastName": "Thompson"
+        },
+        "characterName": "Bianca"
+      }
+    ]
+  },
+  {
+    "title": "Rocky",
+    "duration": 120,
+    "releaseYear": 1976,
+    "characters": [
+      {
+        "actor": {
+          "firstName": "Sylvester",
+          "lastName": "Stallone"
+        },
+        "characterName": "Rocky Balboa"
+      },
+      {
+        "actor": {
+          "firstName": "Talia",
+          "lastName": "Shire"
+        },
+        "characterName": "Adrian"
+      },
+      {
+        "actor": {
+          "firstName": "Carl",
+          "lastName": "Weathers"
+        },
+        "characterName": "Apollo Creed"
+      }
+    ]
+  },
+  {
+    "title": "Rocky IV",
+    "duration": 120,
+    "releaseYear": 1976,
+    "characters": [
+      {
+        "actor": {
+          "firstName": "Sylvester",
+          "lastName": "Stallone"
+        },
+        "characterName": "Rocky Balboa"
+      },
+      {
+        "actor": {
+          "firstName": "Talia",
+          "lastName": "Shire"
+        },
+        "characterName": "Adrian"
+      },
+      {
+        "actor": {
+          "firstName": "Dolph",
+          "lastName": "Lundgren"
+        },
+        "characterName": "Ivan Drago"
+      }
+    ]
+  }
+]
