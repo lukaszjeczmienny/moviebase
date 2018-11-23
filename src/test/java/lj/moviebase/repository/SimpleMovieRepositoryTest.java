@@ -11,7 +11,6 @@ import java.util.Set;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.joda.time.Minutes.minutes;
 
 public class SimpleMovieRepositoryTest {
 
@@ -42,7 +41,7 @@ public class SimpleMovieRepositoryTest {
     }
 
     private void givenMovieWithTitle(String title) {
-        Set<Movie> movies = newHashSet(new Movie(title, minutes(10), Year.now(), emptySet()));
+        Set<Movie> movies = newHashSet(new Movie(title, 10, Year.now(), emptySet()));
         simpleMovieRepository = new SimpleMovieRepository(movies);
     }
 }

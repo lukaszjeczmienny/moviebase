@@ -10,11 +10,12 @@ import static java.util.Collections.unmodifiableSet;
 
 public class Movie {
     private final String title;
-    private final Minutes duration;
+    private final Integer duration;
     private final Year releaseYear;
     private final Set<Character> characters;
 
-    public Movie(String title, Minutes duration, Year releaseYear,
+    @JsonCreator
+    public Movie(String title, Integer duration, Year releaseYear,
                  Set<Character> characters) {
         this.title = title;
         this.duration = duration;
@@ -26,10 +27,11 @@ public class Movie {
         return title;
     }
 
-    public Minutes getDuration() {
+    public Integer getDuration() {
         return duration;
     }
 
+    @JsonSerialize(using = ToStringSerializer.class)
     public Year getReleaseYear() {
         return releaseYear;
     }

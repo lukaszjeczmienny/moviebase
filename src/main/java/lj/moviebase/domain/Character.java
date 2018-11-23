@@ -1,11 +1,14 @@
 package lj.moviebase.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import java.util.Objects;
 
 public class Character {
     private final Actor actor;
     private final String characterName;
 
+    @JsonCreator
     public Character(Actor actor, String characterName) {
         this.actor = actor;
         this.characterName = characterName;
