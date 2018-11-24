@@ -23,6 +23,7 @@ import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static lj.moviebase.resource.JsonUtils.jsonWriterFor;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
@@ -68,8 +69,9 @@ public class MovieResourceTest {
     }
 
     @Test
-    public void shouldCreateMoviePostedAsJson() throws IOException {
+    public void shouldCreateMoviePostedAsJsonAndReturnStatusOk() throws IOException {
         Movie movie = givenMovieObject(SOME_TITLE);
+        given(movieRepository.save(movie)).willReturn(Optional.empty());
 
         Response response = resources.client()
                 .target(VERSIONED_MOVIES_PATH)
@@ -84,6 +86,24 @@ public class MovieResourceTest {
     }
 
     @Test
+    public void shouldReturnStatusConflictWithExistingEntity() throws IOException {
+        Movie movie = givenMovieObject(SOME_TITLE);
+        Movie differentMovieObject = givenMovieObject(SOME_TITLE, "2019");
+        given(movieRepository.save(movie)).willReturn(Optional.of(differentMovieObject));
+
+        Response response = resources.client()
+                .target(VERSIONED_MOVIES_PATH)
+                .request()
+                .header(CONTENT_TYPE, APPLICATION_JSON)
+                .buildPost(json(serialized(movie)))
+                .invoke();
+
+        then(movieRepository).should(only()).save(movie);
+        assertThat(response.getStatusInfo()).isEqualTo(Status.CONFLICT);
+        assertThat(entityFrom(response)).isEqualTo(serialized(differentMovieObject));
+    }
+
+    @Test
     public void shouldRemoveMovieByTitle() {
         Response response = resources.client()
                 .target(VERSIONED_MOVIES_PATH + SOME_TITLE)
@@ -95,13 +115,21 @@ public class MovieResourceTest {
         assertThat(response.getStatusInfo()).isEqualTo(Status.OK);
     }
 
+    private Movie movieThatMatchesTitle(String title) {
+        return argThat(m -> title.equals(m.getTitle()));
+    }
+
     private String serialized(Movie movie) throws IOException {
         return jsonWriterFor(Movie.class).writeValueAsString(movie);
     }
 
     private Movie givenMovieObject(String title) {
+        return givenMovieObject(title, "2018");
+    }
+
+    private Movie givenMovieObject(String title, String year) {
         Character character = new Character(new Actor("first", "last"), "name");
-        return new Movie(title, 100, parse("2018"), newHashSet(character));
+        return new Movie(title, 100, parse(year), newHashSet(character));
     }
 
     private String entityFrom(Response movieJson) throws IOException {

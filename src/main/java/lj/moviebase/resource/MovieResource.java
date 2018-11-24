@@ -13,6 +13,7 @@ import java.util.Optional;
 import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.Response.Status.CONFLICT;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 @Path(MovieResource.VERSION)
@@ -40,10 +41,11 @@ public class MovieResource {
     @POST
     @Path(MOVIES_PATH)
     @Consumes(APPLICATION_JSON)
+    @Produces(APPLICATION_JSON)
     public Response create(Movie movie) throws UnsupportedEncodingException {
-        movieRepository.save(movie);
-        return Response.created(createdMovieUri(movie))
-                .build();
+        return movieRepository.save(movie)
+                .map(this::movieAlreadyExists)
+                .orElse(movieCreated(movie));
     }
 
     @DELETE
@@ -69,8 +71,15 @@ public class MovieResource {
                 .build();
     }
 
+    private Response movieAlreadyExists(Movie movie) {
+        return Response.status(CONFLICT).entity(movie).build();
+    }
+
+    private Response movieCreated(Movie movie) throws UnsupportedEncodingException {
+        return Response.created(createdMovieUri(movie)).build();
+    }
+
     private URI createdMovieUri(Movie movie) throws UnsupportedEncodingException {
         return URI.create(VERSION + MOVIES_PATH + "/" + encode(movie.getTitle(), UTF_8.name()));
     }
-
 }

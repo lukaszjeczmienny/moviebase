@@ -7,7 +7,7 @@ import java.util.Optional;
 public interface MovieRepository {
     Optional<Movie> getByTitle(String id);
 
-    void save(Movie movie);
+    Optional<Movie> save(Movie movie);
 
     Movie removeByTitle(String title);
 }

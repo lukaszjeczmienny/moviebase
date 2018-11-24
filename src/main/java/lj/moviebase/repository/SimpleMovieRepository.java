@@ -33,8 +33,8 @@ public class SimpleMovieRepository implements MovieRepository {
     }
 
     @Override
-    public void save(Movie movie) {
-        movies.putIfAbsent(movie.getTitle(), movie);
+    public Optional<Movie> save(Movie movie) {
+        return Optional.ofNullable(movies.putIfAbsent(movie.getTitle(), movie));
     }
 
     @Override
