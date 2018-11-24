@@ -38,6 +38,12 @@ public class SimpleMovieRepository implements MovieRepository {
     }
 
     @Override
+    public Optional<Movie> update(Movie movieToSet) {
+        return Optional.ofNullable(
+                movies.computeIfPresent(movieToSet.getTitle(), (key, existingMovie) -> movieToSet));
+    }
+
+    @Override
     public Movie removeByTitle(String title) {
         return movies.remove(title);
     }

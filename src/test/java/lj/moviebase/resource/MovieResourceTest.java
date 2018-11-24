@@ -23,7 +23,6 @@ import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static lj.moviebase.resource.JsonUtils.jsonWriterFor;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
@@ -115,8 +114,18 @@ public class MovieResourceTest {
         assertThat(response.getStatusInfo()).isEqualTo(Status.OK);
     }
 
-    private Movie movieThatMatchesTitle(String title) {
-        return argThat(m -> title.equals(m.getTitle()));
+    @Test
+    public void shouldUpdateMovieAndReturnOk() throws IOException {
+        Movie movie = givenMovieObject(SOME_TITLE);
+
+        Response response = resources.client()
+                .target(VERSIONED_MOVIES_PATH)
+                .request()
+                .buildPut(json(serialized(movie)))
+                .invoke();
+
+        then(movieRepository).should(only()).update(movie);
+        assertThat(response.getStatusInfo()).isEqualTo(Status.OK);
     }
 
     private String serialized(Movie movie) throws IOException {

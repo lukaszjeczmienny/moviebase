@@ -9,5 +9,7 @@ public interface MovieRepository {
 
     Optional<Movie> save(Movie movie);
 
+    Optional<Movie> update(Movie movieToSet);
+
     Movie removeByTitle(String title);
 }

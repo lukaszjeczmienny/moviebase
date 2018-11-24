@@ -55,6 +55,14 @@ public class MovieResource {
         return Response.ok().build();
     }
 
+    @PUT
+    @Path(MOVIES_PATH)
+    @Consumes(APPLICATION_JSON)
+    public Response updateMovie(Movie movie) {
+        movieRepository.update(movie);
+        return Response.ok().build();
+    }
+
     private String decoded(String title) throws UnsupportedEncodingException {
         return URLDecoder.decode(title, UTF_8.name());
     }
