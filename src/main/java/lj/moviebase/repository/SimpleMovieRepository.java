@@ -6,38 +6,40 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 import static com.google.common.io.Resources.getResource;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptySet;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 import static lj.moviebase.resource.JsonUtils.jsonMapper;
 
 public class SimpleMovieRepository implements MovieRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(SimpleMovieRepository.class);
-    private final Set<Movie> movies;
+    private final Map<String, Movie> movies;
 
     public SimpleMovieRepository(Set<Movie> movies) {
-        this.movies = movies;
+        this.movies = movies.stream()
+                .collect(toMap(Movie::getTitle, identity()));
     }
 
     @Override
     public Optional<Movie> getByTitle(String title) {
-        return movies.stream()
-                .filter(movie -> movie.getTitle().equals(title))
-                .findFirst();
+        return Optional.ofNullable(movies.get(title));
     }
 
     @Override
     public void save(Movie movie) {
-        movies.add(movie);
+        movies.putIfAbsent(movie.getTitle(), movie);
     }
 
     @Override
-    public boolean removeByTitle(String title) {
-        return movies.removeIf(movie -> movie.getTitle().equals(title));
+    public Movie removeByTitle(String title) {
+        return movies.remove(title);
     }
 
     public static MovieRepository initiallyPopulatedMovieRepository(String initialJsonDataSetPath) {

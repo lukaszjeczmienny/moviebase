@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import java.time.Year;
 import java.util.Optional;
-import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Collections.emptySet;
@@ -38,29 +37,31 @@ public class SimpleMovieRepositoryTest {
     }
 
     @Test
-    public void shouldRemoveMovieBasedOnTitlePredicateIfSuchExistsAndReturnTrue() {
-        givenMovieWithTitle(SOME_TITLE);
+    public void shouldRemoveMovieBasedOnTitlePredicateIfSuchExistsAndReturnRemovedEntry() {
+        Movie movie = givenMovieWithTitle(SOME_TITLE);
 
-        boolean result = simpleMovieRepository.removeByTitle(SOME_TITLE);
+        Movie result = simpleMovieRepository.removeByTitle(SOME_TITLE);
 
-        assertThat(result).isTrue();
+        assertThat(result).isEqualTo(movie);
     }
 
     @Test
-    public void shouldReturnFalseIfMovieWithGivenTitleDoesNotExists() {
+    public void shouldReturnNullIfMovieWithGivenTitleDoesNotExists() {
         givenMovieWithTitle(SOME_TITLE);
 
-        boolean result = simpleMovieRepository.removeByTitle(SOME_OTHER_TITLE);
+        Movie result = simpleMovieRepository.removeByTitle(SOME_OTHER_TITLE);
 
-        assertThat(result).isFalse();
+        assertThat(result).isNull();
     }
 
     private Condition<Movie> movieWithTitle(String title) {
         return new Condition<>(m -> m.getTitle().equals(title), "same as %s title", title);
     }
 
-    private void givenMovieWithTitle(String title) {
-        Set<Movie> movies = newHashSet(new Movie(title, 10, Year.now(), emptySet()));
-        simpleMovieRepository = new SimpleMovieRepository(movies);
+    private Movie givenMovieWithTitle(String title) {
+        Movie movie = new Movie(title, 10, Year.now(), emptySet());
+        simpleMovieRepository = new SimpleMovieRepository(newHashSet(movie));
+        return movie;
     }
+
 }

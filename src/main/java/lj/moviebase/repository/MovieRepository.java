@@ -9,5 +9,5 @@ public interface MovieRepository {
 
     void save(Movie movie);
 
-    boolean removeByTitle(String title);
+    Movie removeByTitle(String title);
 }
