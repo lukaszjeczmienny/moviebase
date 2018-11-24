@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.Objects;
 
+import static com.fasterxml.jackson.annotation.JsonCreator.Mode.PROPERTIES;
 import static org.apache.commons.lang3.StringUtils.SPACE;
 
 public class Actor {
     private final String firstName;
     private final String lastName;
 
-    @JsonCreator
+    @JsonCreator(mode = PROPERTIES)
     public Actor(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;

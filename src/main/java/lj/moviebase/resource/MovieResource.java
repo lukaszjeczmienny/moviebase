@@ -3,23 +3,24 @@ package lj.moviebase.resource;
 import lj.moviebase.domain.Movie;
 import lj.moviebase.repository.MovieRepository;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.util.Optional;
 
+import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
-@Path("/v1")
+@Path(MovieResource.VERSION)
 @Produces(APPLICATION_JSON)
 public class MovieResource {
 
+    static final String VERSION = "/v1";
+    private static final String MOVIES_PATH = "/movies";
     private final MovieRepository movieRepository;
 
     public MovieResource(MovieRepository movieRepository) {
@@ -33,6 +34,15 @@ public class MovieResource {
         Optional<Movie> movie = movieRepository.getByTitle(decoded(title));
         return movie.map(this::movieFound)
                 .orElseGet(this::notFound);
+    }
+
+    @POST
+    @Path(MOVIES_PATH)
+    @Consumes(APPLICATION_JSON)
+    public Response create(Movie movie) throws UnsupportedEncodingException {
+        movieRepository.save(movie);
+        return Response.created(createdMovieUri(movie))
+                .build();
     }
 
     private String decoded(String title) throws UnsupportedEncodingException {
@@ -50,4 +60,9 @@ public class MovieResource {
                 .type(APPLICATION_JSON)
                 .build();
     }
+
+    private URI createdMovieUri(Movie movie) throws UnsupportedEncodingException {
+        return URI.create(VERSION + MOVIES_PATH + "/" + encode(movie.getTitle(), UTF_8.name()));
+    }
+
 }

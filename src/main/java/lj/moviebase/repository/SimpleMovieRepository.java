@@ -30,6 +30,11 @@ public class SimpleMovieRepository implements MovieRepository {
                 .findFirst();
     }
 
+    @Override
+    public void save(Movie movie) {
+        movies.add(movie);
+    }
+
     public static MovieRepository initiallyPopulatedMovieRepository(String initialJsonDataSetPath) {
         return new SimpleMovieRepository(loadMovies(initialJsonDataSetPath));
     }

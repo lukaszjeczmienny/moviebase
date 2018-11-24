@@ -6,4 +6,6 @@ import java.util.Optional;
 
 public interface MovieRepository {
     Optional<Movie> getByTitle(String id);
+
+    void save(Movie movie);
 }
