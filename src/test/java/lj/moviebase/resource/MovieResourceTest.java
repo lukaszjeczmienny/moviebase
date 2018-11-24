@@ -5,6 +5,7 @@ import lj.moviebase.domain.Actor;
 import lj.moviebase.domain.Character;
 import lj.moviebase.domain.Movie;
 import lj.moviebase.repository.MovieRepository;
+import lj.moviebase.resource.parameter.conventer.AdditionalParamConverterProvider;
 import org.apache.commons.io.IOUtils;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,13 +17,17 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static com.google.common.collect.Sets.newHashSet;
+import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Year.parse;
+import static java.util.Collections.emptySet;
 import static javax.ws.rs.client.Entity.json;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static lj.moviebase.resource.JsonUtils.jsonWriterFor;
+import static org.apache.commons.lang3.BooleanUtils.negate;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
@@ -31,12 +36,14 @@ import static org.mockito.Mockito.only;
 public class MovieResourceTest {
     private static final String SOME_TITLE = "someFancyTitle";
     private static final String VERSIONED_MOVIES_PATH = "/v1/movies/";
+    private static final String SOME_YEAR = "2018";
 
     private final MovieRepository movieRepository = mock(MovieRepository.class);
 
     @Rule
     public final ResourceTestRule resources = ResourceTestRule.builder()
             .addResource(new MovieResource(movieRepository))
+            .addProvider(new AdditionalParamConverterProvider())
             .build();
 
     @Test
@@ -60,6 +67,35 @@ public class MovieResourceTest {
 
         Response response = resources.client()
                 .target(VERSIONED_MOVIES_PATH + SOME_TITLE)
+                .request()
+                .buildGet()
+                .invoke();
+
+        assertThat(response.getStatusInfo()).isEqualTo(Status.NOT_FOUND);
+    }
+
+    @Test
+    public void shouldGetMoviesFilteredBasedOnQueryValues() throws IOException {
+        Movie movie = givenMovieObject(SOME_TITLE, SOME_YEAR);
+        given(movieRepository.findAllBy(argThat(filter -> filter.asPredicate().test(movie)))).willReturn(newHashSet(movie));
+
+        Response response = resources.client()
+                .target("/v1/movies?releaseYear=" + SOME_YEAR)
+                .request()
+                .buildGet()
+                .invoke();
+
+        assertThat(response.getStatusInfo()).isEqualTo(Status.OK);
+        assertThat(entityFrom(response)).isEqualTo(array(serialized(movie)));
+    }
+
+    @Test
+    public void shouldResponseWithStatusNotFoundIfAnyMovieDoseNotMatchFilterQueryValues() throws IOException {
+        Movie movie = givenMovieObject(SOME_TITLE, SOME_YEAR);
+        given(movieRepository.findAllBy(argThat(filter -> negate(filter.asPredicate().test(movie))))).willReturn(emptySet());
+
+        Response response = resources.client()
+                .target("/v1/movies?releaseYear=1999")
                 .request()
                 .buildGet()
                 .invoke();
@@ -133,7 +169,7 @@ public class MovieResourceTest {
     }
 
     private Movie givenMovieObject(String title) {
-        return givenMovieObject(title, "2018");
+        return givenMovieObject(title, SOME_YEAR);
     }
 
     private Movie givenMovieObject(String title, String year) {
@@ -143,5 +179,9 @@ public class MovieResourceTest {
 
     private String entityFrom(Response movieJson) throws IOException {
         return IOUtils.toString((ByteArrayInputStream) movieJson.getEntity(), UTF_8);
+    }
+
+    private String array(String serialized) {
+        return format("[%s]", serialized);
     }
 }

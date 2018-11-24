@@ -1,6 +1,7 @@
 package lj.moviebase.repository;
 
 import lj.moviebase.domain.Movie;
+import lj.moviebase.query.filter.FilteringCriteria;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptySet;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static lj.moviebase.resource.JsonUtils.jsonMapper;
 
 public class SimpleMovieRepository implements MovieRepository {
@@ -46,6 +48,13 @@ public class SimpleMovieRepository implements MovieRepository {
     @Override
     public Movie removeByTitle(String title) {
         return movies.remove(title);
+    }
+
+    @Override
+    public Set<Movie> findAllBy(FilteringCriteria<Movie> filter) {
+        return movies.values().stream()
+                .filter(filter.asPredicate())
+                .collect(toSet());
     }
 
     public static MovieRepository initiallyPopulatedMovieRepository(String initialJsonDataSetPath) {

@@ -1,12 +1,14 @@
 package lj.moviebase.repository;
 
 import lj.moviebase.domain.Movie;
+import lj.moviebase.query.filter.FilteringCriteria;
 import org.assertj.core.api.Condition;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static java.time.Year.parse;
@@ -99,6 +101,24 @@ public class SimpleMovieRepositoryTest {
         assertThat(result).isEmpty();
     }
 
+    @Test
+    public void shouldReturnSetWithMatchedMovieWhenFilteringPredicateEvaluatesTrue() {
+        Movie movie = givenMovieWithTitle(SOME_TITLE);
+
+        Set<Movie> result = simpleMovieRepository.findAllBy(predicateReturning(true));
+
+        assertThat(result).containsExactly(movie);
+    }
+
+    @Test
+    public void shouldReturnEmptySetWhenFilteringPredicateDoseNotMatchAnyMovie() {
+        givenMovieWithTitle(SOME_TITLE);
+
+        Set<Movie> result = simpleMovieRepository.findAllBy(predicateReturning(false));
+
+        assertThat(result).isEmpty();
+    }
+
     private Condition<Movie> movieWithTitle(String title) {
         return new Condition<>(m -> m.getTitle().equals(title), "same as %s title", title);
     }
@@ -113,4 +133,7 @@ public class SimpleMovieRepositoryTest {
         return new Movie(title, 10, parse(year), emptySet());
     }
 
+    private FilteringCriteria<Movie> predicateReturning(boolean flag) {
+        return () -> m -> flag;
+    }
 }

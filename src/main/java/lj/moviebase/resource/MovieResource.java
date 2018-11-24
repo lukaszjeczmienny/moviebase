@@ -1,5 +1,6 @@
 package lj.moviebase.resource;
 
+import lj.moviebase.domain.Actor;
 import lj.moviebase.domain.Movie;
 import lj.moviebase.repository.MovieRepository;
 
@@ -8,13 +9,16 @@ import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
+import java.time.Year;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.Response.Status.CONFLICT;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static lj.moviebase.query.filter.MovieFilteringCriteria.filterBasedOn;
 
 @Path(MovieResource.VERSION)
 @Produces(APPLICATION_JSON)
@@ -36,6 +40,18 @@ public class MovieResource {
         Optional<Movie> movie = movieRepository.getByTitle(decoded(title));
         return movie.map(this::movieFound)
                 .orElseGet(this::notFound);
+    }
+
+    @GET
+    @Path(MOVIES_PATH)
+    @Produces(APPLICATION_JSON)
+    public Response findAllMoviesBy(@QueryParam("releaseYear") Optional<Year> releaseYear,
+                                    @QueryParam("duration") Optional<Integer> duration,
+                                    @QueryParam("actor") Optional<Actor> actor) {
+        Set<Movie> findResult = movieRepository.findAllBy(filterBasedOn(duration, releaseYear, actor));
+        return findResult.isEmpty()
+                ? notFound()
+                : movieFound(findResult);
     }
 
     @POST
@@ -72,7 +88,7 @@ public class MovieResource {
                 .build();
     }
 
-    private Response movieFound(Movie movie) {
+    private <M> Response movieFound(M movie) {
         return Response.ok()
                 .entity(movie)
                 .type(APPLICATION_JSON)
