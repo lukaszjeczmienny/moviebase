@@ -3,6 +3,9 @@ package lj.moviebase.resource;
 import lj.moviebase.domain.Actor;
 import lj.moviebase.domain.Movie;
 import lj.moviebase.repository.MovieRepository;
+import lj.moviebase.resource.exception.EncodingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -13,6 +16,7 @@ import java.time.Year;
 import java.util.Optional;
 import java.util.Set;
 
+import static java.lang.String.format;
 import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -25,8 +29,11 @@ import static lj.moviebase.query.filter.MovieFilteringCriteria.filterBasedOn;
 public class MovieResource {
 
     static final String VERSION = "/v1";
+
+    private final static Logger LOG = LoggerFactory.getLogger(MovieResource.class);
     private static final String MOVIES_PATH = "/movies";
     private static final String MOVIES_TITLE_PATH = "/movies/{title}";
+
     private final MovieRepository movieRepository;
 
     public MovieResource(MovieRepository movieRepository) {
@@ -36,7 +43,7 @@ public class MovieResource {
     @GET
     @Path(MOVIES_TITLE_PATH)
     @Produces(APPLICATION_JSON)
-    public Response getMovieByTitle(@PathParam("title") String title) throws UnsupportedEncodingException {
+    public Response getMovieByTitle(@PathParam("title") String title) {
         Optional<Movie> movie = movieRepository.getByTitle(decoded(title));
         return movie.map(this::movieFound)
                 .orElseGet(this::notFound);
@@ -58,7 +65,7 @@ public class MovieResource {
     @Path(MOVIES_PATH)
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
-    public Response create(Movie movie) throws UnsupportedEncodingException {
+    public Response create(Movie movie) {
         return movieRepository.save(movie)
                 .map(this::movieAlreadyExists)
                 .orElse(movieCreated(movie));
@@ -66,7 +73,7 @@ public class MovieResource {
 
     @DELETE
     @Path(MOVIES_TITLE_PATH)
-    public Response removeMovie(@PathParam("title") String title) throws UnsupportedEncodingException {
+    public Response removeMovie(@PathParam("title") String title) {
         movieRepository.removeByTitle(decoded(title));
         return Response.ok().build();
     }
@@ -79,8 +86,12 @@ public class MovieResource {
         return Response.ok().build();
     }
 
-    private String decoded(String title) throws UnsupportedEncodingException {
-        return URLDecoder.decode(title, UTF_8.name());
+    private String decoded(String title) {
+        try {
+            return URLDecoder.decode(title, UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+            throw logAndWrapIntoEncodingException(title, e);
+        }
     }
 
     private Response notFound() {
@@ -99,11 +110,21 @@ public class MovieResource {
         return Response.status(CONFLICT).entity(movie).build();
     }
 
-    private Response movieCreated(Movie movie) throws UnsupportedEncodingException {
+    private Response movieCreated(Movie movie) {
         return Response.created(createdMovieUri(movie)).build();
     }
 
-    private URI createdMovieUri(Movie movie) throws UnsupportedEncodingException {
-        return URI.create(VERSION + MOVIES_PATH + "/" + encode(movie.getTitle(), UTF_8.name()));
+    private URI createdMovieUri(Movie movie) {
+        try {
+            return URI.create(VERSION + MOVIES_PATH + "/" + encode(movie.getTitle(), UTF_8.name()));
+        } catch (UnsupportedEncodingException e) {
+            throw logAndWrapIntoEncodingException(movie.getTitle(), e);
+        }
+    }
+
+    private EncodingException logAndWrapIntoEncodingException(String title, Exception e) {
+        String msg = format("Error during encoding of movie title %s", title);
+        LOG.error(msg, e);
+        return new EncodingException(msg, e);
     }
 }
