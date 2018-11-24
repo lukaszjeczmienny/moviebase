@@ -35,6 +35,11 @@ public class SimpleMovieRepository implements MovieRepository {
         movies.add(movie);
     }
 
+    @Override
+    public boolean removeByTitle(String title) {
+        return movies.removeIf(movie -> movie.getTitle().equals(title));
+    }
+
     public static MovieRepository initiallyPopulatedMovieRepository(String initialJsonDataSetPath) {
         return new SimpleMovieRepository(loadMovies(initialJsonDataSetPath));
     }

@@ -8,4 +8,6 @@ public interface MovieRepository {
     Optional<Movie> getByTitle(String id);
 
     void save(Movie movie);
+
+    boolean removeByTitle(String title);
 }

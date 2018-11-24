@@ -21,6 +21,7 @@ public class MovieResource {
 
     static final String VERSION = "/v1";
     private static final String MOVIES_PATH = "/movies";
+    private static final String MOVIES_TITLE_PATH = "/movies/{title}";
     private final MovieRepository movieRepository;
 
     public MovieResource(MovieRepository movieRepository) {
@@ -28,7 +29,7 @@ public class MovieResource {
     }
 
     @GET
-    @Path("/movies/{title}")
+    @Path(MOVIES_TITLE_PATH)
     @Produces(APPLICATION_JSON)
     public Response getMovieByTitle(@PathParam("title") String title) throws UnsupportedEncodingException {
         Optional<Movie> movie = movieRepository.getByTitle(decoded(title));
@@ -43,6 +44,13 @@ public class MovieResource {
         movieRepository.save(movie);
         return Response.created(createdMovieUri(movie))
                 .build();
+    }
+
+    @DELETE
+    @Path(MOVIES_TITLE_PATH)
+    public Response removeMovie(@PathParam("title") String title) throws UnsupportedEncodingException {
+        movieRepository.removeByTitle(decoded(title));
+        return Response.ok().build();
     }
 
     private String decoded(String title) throws UnsupportedEncodingException {

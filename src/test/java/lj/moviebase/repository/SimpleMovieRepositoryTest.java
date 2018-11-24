@@ -15,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SimpleMovieRepositoryTest {
 
     private static final String SOME_TITLE = "someTitle";
+    private static final String SOME_OTHER_TITLE = "someOtherTitle";
 
     private SimpleMovieRepository simpleMovieRepository;
 
@@ -29,11 +30,29 @@ public class SimpleMovieRepositoryTest {
 
     @Test
     public void shouldNotFindMovieByTitleIfItDoesNotExistsInMovieBase() {
-        givenMovieWithTitle("someOtherTitle");
+        givenMovieWithTitle(SOME_OTHER_TITLE);
 
         Optional<Movie> movie = simpleMovieRepository.getByTitle(SOME_TITLE);
 
         assertThat(movie).isNotPresent();
+    }
+
+    @Test
+    public void shouldRemoveMovieBasedOnTitlePredicateIfSuchExistsAndReturnTrue() {
+        givenMovieWithTitle(SOME_TITLE);
+
+        boolean result = simpleMovieRepository.removeByTitle(SOME_TITLE);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void shouldReturnFalseIfMovieWithGivenTitleDoesNotExists() {
+        givenMovieWithTitle(SOME_TITLE);
+
+        boolean result = simpleMovieRepository.removeByTitle(SOME_OTHER_TITLE);
+
+        assertThat(result).isFalse();
     }
 
     private Condition<Movie> movieWithTitle(String title) {

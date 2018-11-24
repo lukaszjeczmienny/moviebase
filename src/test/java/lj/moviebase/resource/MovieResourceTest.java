@@ -83,6 +83,18 @@ public class MovieResourceTest {
         assertThat(response.getLocation().getPath()).isEqualTo(VERSIONED_MOVIES_PATH + SOME_TITLE);
     }
 
+    @Test
+    public void shouldRemoveMovieByTitle() {
+        Response response = resources.client()
+                .target(VERSIONED_MOVIES_PATH + SOME_TITLE)
+                .request()
+                .buildDelete()
+                .invoke();
+
+        then(movieRepository).should(only()).removeByTitle(SOME_TITLE);
+        assertThat(response.getStatusInfo()).isEqualTo(Status.OK);
+    }
+
     private String serialized(Movie movie) throws IOException {
         return jsonWriterFor(Movie.class).writeValueAsString(movie);
     }
