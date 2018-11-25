@@ -8,9 +8,11 @@ import lj.moviebase.domain.Actor;
 import lj.moviebase.domain.Movie;
 import lj.moviebase.repository.MovieRepository;
 import lj.moviebase.resource.exception.EncodingException;
+import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
@@ -51,7 +53,7 @@ public class MovieResource {
     @ApiOperation(value = "Get movie by title")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Movie not found ith title parameter"),
             @ApiResponse(code = 200, message = "Movie found with title parameter")})
-    public Response getMovieByTitle(@PathParam("title") String title) {
+    public Response getMovieByTitle(@PathParam("title") @NotBlank String title) {
         Optional<Movie> movie = movieRepository.getByTitle(decoded(title));
         return movie.map(this::movieFound)
                 .orElseGet(this::notFound);
@@ -76,7 +78,7 @@ public class MovieResource {
     @ApiOperation(value = "Add new movie to base")
     @ApiResponses(value = {@ApiResponse(code = 409, message = "Movie already exist"),
             @ApiResponse(code = 200, message = "Movie created")})
-    public Response create(Movie movie) {
+    public Response create(@Valid Movie movie) {
         return movieRepository.save(movie)
                 .map(this::movieAlreadyExists)
                 .orElse(movieCreated(movie));
@@ -85,7 +87,7 @@ public class MovieResource {
     @DELETE
     @ApiOperation(value = "Remove movie by title")
     @Path(MOVIES_TITLE_PATH)
-    public Response removeMovie(@PathParam("title") String title) {
+    public Response removeMovie(@PathParam("title") @NotBlank String title) {
         movieRepository.removeByTitle(decoded(title));
         return Response.ok().build();
     }
@@ -94,7 +96,7 @@ public class MovieResource {
     @Path(MOVIES_PATH)
     @Consumes(APPLICATION_JSON)
     @ApiOperation(value = "Update movie by passing new definition")
-    public Response updateMovie(Movie movie) {
+    public Response updateMovie(@Valid Movie movie) {
         movieRepository.update(movie);
         return Response.ok().build();
     }

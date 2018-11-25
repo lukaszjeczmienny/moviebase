@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.time.Year;
 import java.util.Objects;
 import java.util.Set;
@@ -13,12 +16,16 @@ import static java.util.Collections.unmodifiableSet;
 
 public class Movie {
     @ApiModelProperty(required = true, example = "Title of movie")
+    @NotBlank
     private final String title;
     @ApiModelProperty(value = "Duration of movie", dataType = "java.lang.Integer", example = "120")
+    @NotNull
     private final Integer duration;
     @ApiModelProperty(value = "Year of movie release", dataType = "java.time.Year", example = "2001")
+    @NotNull
     private final Year releaseYear;
     @ApiModelProperty(value = "List of characters occurring in movie")
+    @Valid
     private final Set<Character> characters;
 
     @JsonCreator

@@ -2,6 +2,8 @@ package lj.moviebase.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModelProperty;
+import lj.moviebase.resource.exception.EncodingException;
+import org.hibernate.validator.constraints.NotBlank;
 
 import java.util.Objects;
 
@@ -10,8 +12,10 @@ import static org.apache.commons.lang3.StringUtils.SPACE;
 
 public class Actor {
     @ApiModelProperty(value = "Simply first name")
+    @NotBlank
     private final String firstName;
     @ApiModelProperty(value = "Simply last name")
+    @NotBlank
     private final String lastName;
 
     @JsonCreator(mode = PROPERTIES)
@@ -43,7 +47,10 @@ public class Actor {
     }
 
     public static Actor fromString(String actor) {
-        String[] actor2 = actor.split(SPACE);
-        return new Actor(actor2[0], actor2[1]);
+        String[] initials = actor.split(SPACE);
+        if (!(initials.length == 2)) {
+            throw new EncodingException("Could not decode actor's initials");
+        }
+        return new Actor(initials[0], initials[1]);
     }
 }
