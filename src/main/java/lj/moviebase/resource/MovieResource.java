@@ -30,7 +30,7 @@ import static lj.moviebase.query.filter.MovieFilteringCriteria.filterBasedOn;
 
 @Path(MovieResource.VERSION)
 @Produces(APPLICATION_JSON)
-@Api(value = MovieResource.VERSION, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
+@Api(value = "Movie base versioned API: " + MovieResource.VERSION, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
 public class MovieResource {
 
     static final String VERSION = "/v1";
