@@ -17,14 +17,14 @@ import static java.util.Collections.emptySet;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
-import static lj.moviebase.resource.JsonUtils.jsonMapper;
+import static lj.moviebase.util.JsonUtils.jsonMapper;
 
 public class SimpleMovieRepository implements MovieRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(SimpleMovieRepository.class);
     private final Map<String, Movie> movies;
 
-    public SimpleMovieRepository(Set<Movie> movies) {
+    SimpleMovieRepository(Set<Movie> movies) {
         this.movies = movies.stream()
                 .collect(toMap(Movie::getTitle, identity()));
     }

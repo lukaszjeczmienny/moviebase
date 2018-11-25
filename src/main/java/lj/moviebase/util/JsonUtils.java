@@ -1,4 +1,4 @@
-package lj.moviebase.resource;
+package lj.moviebase.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;

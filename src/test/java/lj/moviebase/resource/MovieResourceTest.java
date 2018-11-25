@@ -24,7 +24,7 @@ import static java.util.Collections.emptySet;
 import static javax.ws.rs.client.Entity.json;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static lj.moviebase.resource.JsonUtils.jsonWriterFor;
+import static lj.moviebase.util.JsonUtils.jsonWriterFor;
 import static org.apache.commons.lang3.BooleanUtils.negate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.argThat;
