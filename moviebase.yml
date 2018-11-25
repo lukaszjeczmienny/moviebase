@@ -13,3 +13,7 @@ server:
     - type: http
       port: 8080
   applicationContextPath: /api
+
+swagger:
+  resourcePackage: lj.moviebase.resource
+  title: Simple Movie Base Service

@@ -1,13 +1,16 @@
 package lj.moviebase.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonCreator.Mode.PROPERTIES;
 
 public class Character {
+    @ApiModelProperty(value = "Actor who played this character")
     private final Actor actor;
+    @ApiModelProperty(example = "Simply character name")
     private final String characterName;
 
     @JsonCreator(mode = PROPERTIES)

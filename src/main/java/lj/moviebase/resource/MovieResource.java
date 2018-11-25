@@ -1,5 +1,9 @@
 package lj.moviebase.resource;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lj.moviebase.domain.Actor;
 import lj.moviebase.domain.Movie;
 import lj.moviebase.repository.MovieRepository;
@@ -26,6 +30,7 @@ import static lj.moviebase.query.filter.MovieFilteringCriteria.filterBasedOn;
 
 @Path(MovieResource.VERSION)
 @Produces(APPLICATION_JSON)
+@Api(value = MovieResource.VERSION, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
 public class MovieResource {
 
     static final String VERSION = "/v1";
@@ -43,6 +48,9 @@ public class MovieResource {
     @GET
     @Path(MOVIES_TITLE_PATH)
     @Produces(APPLICATION_JSON)
+    @ApiOperation(value = "Get movie by title")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Movie not found ith title parameter"),
+            @ApiResponse(code = 200, message = "Movie found with title parameter")})
     public Response getMovieByTitle(@PathParam("title") String title) {
         Optional<Movie> movie = movieRepository.getByTitle(decoded(title));
         return movie.map(this::movieFound)
@@ -65,6 +73,9 @@ public class MovieResource {
     @Path(MOVIES_PATH)
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
+    @ApiOperation(value = "Add new movie to base")
+    @ApiResponses(value = {@ApiResponse(code = 409, message = "Movie already exist"),
+            @ApiResponse(code = 200, message = "Movie created")})
     public Response create(Movie movie) {
         return movieRepository.save(movie)
                 .map(this::movieAlreadyExists)
@@ -72,6 +83,7 @@ public class MovieResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Remove movie by title")
     @Path(MOVIES_TITLE_PATH)
     public Response removeMovie(@PathParam("title") String title) {
         movieRepository.removeByTitle(decoded(title));
@@ -81,6 +93,7 @@ public class MovieResource {
     @PUT
     @Path(MOVIES_PATH)
     @Consumes(APPLICATION_JSON)
+    @ApiOperation(value = "Update movie by passing new definition")
     public Response updateMovie(Movie movie) {
         movieRepository.update(movie);
         return Response.ok().build();

@@ -1,6 +1,7 @@
 package lj.moviebase.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Objects;
 
@@ -8,7 +9,9 @@ import static com.fasterxml.jackson.annotation.JsonCreator.Mode.PROPERTIES;
 import static org.apache.commons.lang3.StringUtils.SPACE;
 
 public class Actor {
+    @ApiModelProperty(value = "Simply first name")
     private final String firstName;
+    @ApiModelProperty(value = "Simply last name")
     private final String lastName;
 
     @JsonCreator(mode = PROPERTIES)
