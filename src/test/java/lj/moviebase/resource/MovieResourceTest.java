@@ -33,6 +33,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.only;
 
+@SuppressWarnings("SameParameterValue")
 public class MovieResourceTest {
     private static final String SOME_TITLE = "someFancyTitle";
     private static final String VERSIONED_MOVIES_PATH = "/v1/movies/";
@@ -90,7 +91,7 @@ public class MovieResourceTest {
     }
 
     @Test
-    public void shouldResponseWithStatusNotFoundIfAnyMovieDoseNotMatchFilterQueryValues() throws IOException {
+    public void shouldResponseWithStatusNotFoundIfAnyMovieDoseNotMatchFilterQueryValues() {
         Movie movie = givenMovieObject(SOME_TITLE, SOME_YEAR);
         given(movieRepository.findAllBy(argThat(filter -> negate(filter.asPredicate().test(movie))))).willReturn(emptySet());
 

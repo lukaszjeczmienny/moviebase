@@ -12,7 +12,7 @@ import lj.moviebase.resource.parameter.conventer.AdditionalParamConverterProvide
 
 import static lj.moviebase.repository.SimpleMovieRepository.initiallyPopulatedMovieRepository;
 
-public class MovieBaseApplication extends Application<MovieBaseConfiguration> {
+class MovieBaseApplication extends Application<MovieBaseConfiguration> {
 
     public static void main(String[] args) throws Exception {
         new MovieBaseApplication().run(args);

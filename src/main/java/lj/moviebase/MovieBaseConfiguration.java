@@ -5,7 +5,8 @@ import io.dropwizard.Configuration;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class MovieBaseConfiguration extends Configuration {
+@SuppressWarnings("ALL")
+class MovieBaseConfiguration extends Configuration {
 
     @NotEmpty
     private String initialMoviesDataSetPath;

@@ -9,6 +9,7 @@ import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonCreator.Mode.PROPERTIES;
 
+@SuppressWarnings("unused")
 public class Character {
     @ApiModelProperty(value = "Actor who played this character")
     @Valid

@@ -3,7 +3,7 @@ package lj.moviebase.resource.parameter.conventer;
 import javax.ws.rs.ext.ParamConverter;
 import java.time.Year;
 
-public class YearParamConverter implements ParamConverter<Year> {
+class YearParamConverter implements ParamConverter<Year> {
 
     @Override
     public Year fromString(String year) {

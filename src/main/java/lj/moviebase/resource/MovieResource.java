@@ -30,6 +30,7 @@ import static javax.ws.rs.core.Response.Status.CONFLICT;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static lj.moviebase.query.filter.MovieFilteringCriteria.filterBasedOn;
 
+@SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "WeakerAccess"})
 @Path(MovieResource.VERSION)
 @Produces(APPLICATION_JSON)
 @Api(value = "Movie base versioned API: " + MovieResource.VERSION, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)

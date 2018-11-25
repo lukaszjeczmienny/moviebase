@@ -6,6 +6,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.time.Year;
 
+@SuppressWarnings("unchecked")
 public class AdditionalParamConverterProvider implements ParamConverterProvider {
     @Override
     public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType, Annotation[] annotations) {

@@ -15,7 +15,7 @@ public class EncodingExceptionMapperTest {
 
     private static final String SOME_EXCEPTION_MESSAGE = "someMessage";
 
-    private ExceptionMapper<EncodingException> exceptionMapper = new EncodingExceptionMapper();
+    private final ExceptionMapper<EncodingException> exceptionMapper = new EncodingExceptionMapper();
 
     @Test
     public void shouldReturnResponseWithStatusBadRequestAndWithMessageFromException() {

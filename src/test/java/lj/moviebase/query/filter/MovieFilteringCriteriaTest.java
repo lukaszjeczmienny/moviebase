@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+@SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "OptionalGetWithoutIsPresent"})
 @RunWith(JUnitParamsRunner.class)
 public class MovieFilteringCriteriaTest {
 
@@ -33,8 +34,8 @@ public class MovieFilteringCriteriaTest {
     private static final Optional<Actor> SOME_ACTOR = Optional.of(new Actor("Adam", "B"));
     private static final Optional<Actor> OTHER_ACTOR = Optional.of(new Actor("Jan", "C"));
 
-    private Movie movie = mock(Movie.class);
-    private Character character = mock(Character.class);
+    private final Movie movie = mock(Movie.class);
+    private final Character character = mock(Character.class);
 
     @Test
     @Parameters(method = "casesEvaluatedToTrue")

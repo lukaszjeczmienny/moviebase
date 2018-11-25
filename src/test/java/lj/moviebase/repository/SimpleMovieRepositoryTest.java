@@ -15,6 +15,7 @@ import static java.time.Year.parse;
 import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SuppressWarnings("SameParameterValue")
 public class SimpleMovieRepositoryTest {
 
     private static final String SOME_TITLE = "someTitle";

@@ -8,6 +8,7 @@ import java.time.Year;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class MovieFilteringCriteria implements FilteringCriteria<Movie> {
 
     private static final Predicate<Movie> ALWAYS_TRUE_PREDICATE = m -> true;

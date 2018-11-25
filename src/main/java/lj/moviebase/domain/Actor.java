@@ -10,6 +10,7 @@ import java.util.Objects;
 import static com.fasterxml.jackson.annotation.JsonCreator.Mode.PROPERTIES;
 import static org.apache.commons.lang3.StringUtils.SPACE;
 
+@SuppressWarnings("unused")
 public class Actor {
     @ApiModelProperty(value = "Simply first name")
     @NotBlank
